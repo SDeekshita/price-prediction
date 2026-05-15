@@ -1,0 +1,279 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Price Comparison</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em;
+        }
+
+        .product-comparison {
+            background-color: #f7f7f7;
+            padding: 1em;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Registration Page -->
+    <div id="registration-page" style="display: none;">
+        <header>
+            <h1>Register</h1>
+        </header>
+        <main>
+            <form id="registration-form">
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" name="name" required><br><br>
+                
+                <label for="email-reg">Email ID:</label>
+                <input type="email" id="email-reg" name="email" required><br><br>
+                
+                <label for="password-reg">Password:</label>
+                <input type="password" id="password-reg" name="password" required><br><br>
+                
+                <button id="register-btn">Register</button>
+            </form>
+            <p>
+                Already have an account? <a href="#" id="to-login-link">Login here</a>
+            </p>
+        </main>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page">
+        <header>
+            <h1>Login</h1>
+        </header>
+        <main>
+            <form id="login-form">
+                <label for="email">Email ID:</label>
+                <input type="email" id="email" name="email" required><br><br>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required><br><br>
+                <button id="login-btn">Login</button>
+            </form>
+            <p>
+                Don't have an account? <a href="#" id="to-register-link">Register here</a>
+            </p>
+            <p>
+                <a href="#" id="direct-link">Go to Price Comparison directly</a>
+            </p>
+        </main>
+    </div>
+
+    <!-- Comparison Page -->
+    <div id="comparison-page" style="display: none;">
+        <header>
+            <h1>Product Price Comparison</h1>
+            <button id="logout-btn" style="float: right;">Logout</button>
+        </header>
+        <main>
+            <section class="product-comparison">
+                <h2>Compare Prices</h2>
+                <form>
+                    <label for="product-name">Product Name:</label>
+                    <input type="text" id="product-name" name="product-name" required><br><br>
+                    <button id="search-btn">Search</button>
+                </form>
+                <div id="price-comparison-results">
+                    <h2>Price Comparison Results</h2>
+                    <table>
+                        <tr>
+                            <th>Website</th>
+                            <th>Price (₹)</th>
+                            <th>Link</th>
+                        </tr>
+                        <tr>
+                            <td>Amazon</td>
+                            <td id="amazon-price"></td>
+                            <td id="amazon-link"></td>
+                        </tr>
+                        <tr>
+                            <td>Flipkart</td>
+                            <td id="flipkart-price"></td>
+                            <td id="flipkart-link"></td>
+                        </tr>
+                        <tr>
+                            <td>Ajio</td>
+                            <td id="ajio-price"></td>
+                            <td id="ajio-link"></td>
+                        </tr>
+                        <tr>
+                            <td>BigBasket</td>
+                            <td id="bigbasket-price"></td>
+                            <td id="bigbasket-link"></td>
+                        </tr>
+                        <tr>
+                            <td>Myntra</td>
+                            <td id="myntra-price"></td>
+                            <td id="myntra-link"></td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Page Elements
+        const registrationPage = document.getElementById('registration-page');
+        const loginPage = document.getElementById('login-page');
+        const comparisonPage = document.getElementById('comparison-page');
+
+        const registrationForm = document.getElementById('registration-form');
+        const loginForm = document.getElementById('login-form');
+        const logoutBtn = document.getElementById('logout-btn');
+        const directLink = document.getElementById('direct-link');
+
+        const toRegisterLink = document.getElementById('to-register-link');
+        const toLoginLink = document.getElementById('to-login-link');
+
+        let users = []; // Store registered users
+
+        // Registration Form Handling
+        registrationForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email-reg').value;
+            const password = document.getElementById('password-reg').value;
+
+            // Save user data
+            users.push({ name, email, password });
+            alert("Registration successful! Please log in.");
+            
+            // Switch to login page
+            registrationPage.style.display = "none";
+            loginPage.style.display = "block";
+        });
+
+        // Login Form Handling
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Validate user credentials
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+                loginPage.style.display = "none";
+                comparisonPage.style.display = "block";
+            } else {
+                alert("Invalid email or password. Please try again.");
+            }
+        });
+
+        // Switch to Registration Page
+        toRegisterLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginPage.style.display = "none";
+            registrationPage.style.display = "block";
+        });
+
+        // Switch to Login Page
+        toLoginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            registrationPage.style.display = "none";
+            loginPage.style.display = "block";
+        });
+
+        // Direct Link to Comparison Page
+        directLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginPage.style.display = "none";
+            comparisonPage.style.display = "block";
+        });
+
+        // Logout Handling
+        logoutBtn.addEventListener('click', () => {
+            comparisonPage.style.display = "none";
+            loginPage.style.display = "block";
+        });
+
+        // Product Price Comparison Handling
+        const searchBtn = document.getElementById('search-btn');
+        searchBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const productName = document.getElementById('product-name').value;
+
+            // Simulate API calls
+            const amazonPrice = Math.floor(Math.random() * 1000);
+            const flipkartPrice = Math.floor(Math.random() * 1000);
+            const ajioPrice = Math.floor(Math.random() * 1000);
+            const bigbasketPrice = Math.floor(Math.random() * 1000);
+            const myntraPrice = Math.floor(Math.random() * 1000);
+
+            // Update the table
+            document.getElementById('amazon-price').innerText = amazonPrice;
+            document.getElementById('amazon-link').innerHTML = `<a href="https://www.amazon.in/s?k=${encodeURIComponent(productName)}" target="_blank">View on Amazon</a>`;
+            document.getElementById('flipkart-price').innerText = flipkartPrice;
+            document.getElementById('flipkart-link').innerHTML = `<a href="https://www.flipkart.com/search?q=${encodeURIComponent(productName)}" target="_blank">View on Flipkart</a>`;
+            document.getElementById('ajio-price').innerText = ajioPrice;
+            document.getElementById('ajio-link').innerHTML = `<a href="https://www.ajio.com/search/?text=${encodeURIComponent(productName)}" target="_blank">View on Ajio</a>`;
+            document.getElementById('bigbasket-price').innerText = bigbasketPrice;
+            document.getElementById('bigbasket-link').innerHTML = `<a href="https://www.bigbasket.com/ps/?q=${encodeURIComponent(productName)}" target="_blank">View on BigBasket</a>`;
+            document.getElementById('myntra-price').innerText = myntraPrice;
+            document.getElementById('myntra-link').innerHTML = `<a href="https://www.myntra.com/${encodeURIComponent(productName)}" target="_blank">View on Myntra</a>`;
+        });
+    </script>
+</body>
+</html>
+         
